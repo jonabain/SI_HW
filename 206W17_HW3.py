@@ -20,25 +20,65 @@ import re
 
 ## Write code to define your parse_counted_words function here.
 
-
-
-
+def parse_counted_words(phrase):
+    match_list = []
+    match_list = re.findall('\d+ #?[a-zA-Z]+', phrase)
+    n = len(match_list)
+    if n > 0: 
+        last_match = match_list[n-1]
+        split_last_match = last_match.split()
+        twople = (split_last_match[0], split_last_match[1])
+        return twople
+    else:
+        return None
 ## PART 2: 200 points
 
 ## We have provided a text file computer_paths.txt. It's not incredibly long -- you can scan through it, but do NOT hard code your answers! Each line contains 1 filesystem path.
-
+file = open("computer_paths.txt", "r")
 ## (a) Write Python code to determine how many of these paths identify FILES, not directories. Save that number in the variable file_paths_num.
 
+file_paths_list = []
+full_paths_num = []
+for line in file:
+    new = []
+    new = re.findall('(\.xlsx|docx|py|\.xl|\.jpg|\.gif)',line)
+    if len(new) > 0:
+        file_paths_list.append(new)
+file_paths_num = len(file_paths_list)
+
 ## (b) Write Python code to determine how many of these paths are FULL paths, not relative paths. Save that number in the variable full_paths_num.
+file = open("computer_paths.txt", "r")
+full_paths_list = []
+full_paths_num = []
+for line in file:
+    new = []
+    new = re.findall('(Users|~)', line)
+    if len(new) > 0:
+        full_paths_list.append(new)
+full_paths_num = len(full_paths_list)
 
 ## (c) Write Python code to determine how many of these paths describe a Python file saved inside a folder called SI206. Save that number in the variable python_course_paths.
+file = open("computer_paths.txt", "r")
+py_files_list = []
+python_course_paths =[]
+for line in file:
+    new = []
+    new = re.findall('SI206\/\w+\.py', line)
+    if len(new) > 0:
+        py_files_list.append(new)
+python_course_paths = len(py_files_list)
 
 ## (d) Write Python code to determine how many of these paths describe a Microsoft file (a file that EITHER ends with .docx OR .xlsx, but nothing else counts) where the file name ends in a digit. Save that total in the variable microsoft_files_num.
 
-
-
-
-
+file = open("computer_paths.txt", "r")
+micro_files_list = []
+microsoft_files_num = []
+for line in file:
+    new = []
+    new = re.findall('[0-9](\.xlsx|\.docx)', line)
+    if len(new) > 0:
+        micro_files_list.append(new)
+microsoft_files_num = len(micro_files_list)
 
 ## We have provided unit tests in this file. To earn the full 500 points, you'll need to pass all of the tests and will need to have followed the instructions.
 ## Each class of the tests represents one "part" of the homework, and the points for each part are divided approx. equally between each of the tests.
