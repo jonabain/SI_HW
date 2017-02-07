@@ -2,9 +2,9 @@ import unittest
 import re
 
 ## SI 206 - W17 - HW3
-## COMMENT WITH:
-## Your section day/time:
-## Any names of people you worked with on this assignment:
+## COMMENT WITH: Name is Jonathan Bain
+## Your section day/time: Tuesday/Thursday 8:30AM
+## Any names of people you worked with on this assignment: No one
 
 #####################
 
