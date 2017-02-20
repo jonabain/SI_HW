@@ -7,7 +7,7 @@ import twitter_info
 ## SI 206 - W17 - HW5
 ## COMMENT WITH:
 ## Your section day/time: TuThurs 8:30
-## Any names of people you worked with on this assignment:
+## Any names of people you worked with on this assignment: Mike Miller
 
 ######## 500 points total ########
 
@@ -50,7 +50,7 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser()) # Set up library to g
 ## 1. Set up the caching pattern start -- the dictionary and the try/except statement shown in class.
 CACHE_FNAME = 'twitty_cache.json' # String for your file. We want the JSON file type, because that way, we can easily get the information into a Python dictionary!
 try:
-	cache_file = open(CACHE_FNAME, 'r')
+	cache_file = open(CACHE_FNAME, 'r', encoding = 'utf-8')
 	cache_contents = cache_file.read()
 	CACHE_DICTION = json.loads(cache_contents)
 	cache_file.close()
@@ -59,28 +59,31 @@ except:
 
 ## 2. Write a function to get twitter data that works with the caching pattern, so it either gets new data or caches data, depending upon what the input to search for is. You can model this off the class exercise from Tuesday.
 def get_or_cache_data(key):
-	if key in CACHE_DICTION:
-		response_text = CACHE_DICTION[key]
+	formatted_key = "twitter_{}".format(key)
+	if formatted_key in CACHE_DICTION:
+		response_text = CACHE_DICTION[formatted_key]
 	else:
-		response = API.statuses_lookup(key)
-		CACHE_DICTION[key] = response.text
-		response_text = response.text
- 		cache_file = open(CACHE_FNAME, 'w')
+		response = api.search(q = key,lang = 'en', rpp = 3)
+		response = response["statuses"]
+		CACHE_DICTION[formatted_key] = response
+		cache_file = open(CACHE_FNAME, 'w', encoding = 'utf-8')
 		cache_file.write(json.dumps(CACHE_DICTION))
 		cache_file.close()
-
-	response_dictionary = json.loads(response_text)
-	return response_dictionary
+		response_list = []
+		for twat in response:
+			response_list.append(twat)
+		return response_list
 
 ## 3. Invoke your function, save the return value in a variable, and explore the data you got back!
-variable = get_or_cache_data(input("What do you want to search for, good sir or madam?"))
-print variable
 ## 4. With what you learn from the data -- e.g. how exactly to find the text of each tweet in the big nested structure -- write code to print out content from 3 tweets, as shown above.
-
-
-
-
-
-
-
-
+response_list = {}
+response_list = get_or_cache_data(input("What do you want to search for, good sir or madam?"))
+for twat in response_list[:3]:
+	print('\n')
+	string_to_print = twat["text"].encode('utf-8')
+	print("Text: ", end = '')
+	try:
+		print(string_to_print.decode('utf-8'))
+	except:
+		print(string_to_print)
+	print("CREATED AT:", twat["created_at"])
