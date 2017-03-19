@@ -263,6 +263,5 @@ class Problem10(unittest.TestCase):
     def test_generator2(self):
         self.assertEqual(list(len_check(readfiles(["samplehw6_1.txt","samplehw6_2.txt"]))),['this is a very long line that is more than thirty or forty characters long\n', 'supercalifragilisticexpialidocioussupercalifragilisticexpialidocious', 'Where Does the Dance Begin, Where Does It End?\n', "Don't call this world adorable, or useful, that's not it.\n", "It's frisky, and a theater for more than fair winds.\n", 'The eyelash of lightning is neither good nor evil.\n', 'The struck tree burns like a pillar of gold.\n', 'But the blue rain sinks, straight to the white\n', "Doesn't the wind, turning in circles, invent the dance?\n", "Haven't the flowers moved, slowly, across Asia, then Europe,\n", "Don't call this world an explanation, or even an education.\n", 'When the Sufi poet whirled, was he looking\n', 'outward, to the mountains so solidly there\n', 'in a white-capped ring, or was he looking\n', 'to the center of everything: the seed, the egg, the idea\n', 'curved and touching the finger, tenderly,\n'])
 
-
 if __name__ == "__main__":
     unittest.main(verbosity=2)
