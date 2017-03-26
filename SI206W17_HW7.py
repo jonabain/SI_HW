@@ -8,7 +8,7 @@ import tweepy
 import twitter_info # still need this in the same directory, filled out
 
 ## Make sure to comment with:
-# Your name:
+# Your name: Jonathan Bain
 # The names of any people you worked with for this assignment:
 
 # ******** #
@@ -86,29 +86,41 @@ def get_user_tweets(handle):
 
 # Make a connection to a new database tweets.db, and create a variable to hold the database cursor.
 
-
+conn = sqlite3.connect('tweets.db')
+c = conn.cursor()
 # Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), with the correct (4) column names and appropriate types for each.
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
+c.execute('DROP TABLE IF EXISTS Tweets')
 
+p = 'CREATE TABLE IF NOT EXISTS '
+p += 'Tweets (tweet_id INTEGER PRIMARY KEY, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)'
+c.execute(p)
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
-
-
-
+umsi_tweets = get_user_tweets('UMSI')
 
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
+container = []
 
+for i in range(20):
+	id_item = umsi_tweets[i]["id"]
+	user_item = umsi_tweets[i]["user"]["screen_name"]
+	created_at_item = umsi_tweets[i]["created_at"]
+	text_item = umsi_tweets[i]["text"]
+	retweet_item = umsi_tweets[i]["retweet_count"]
+	container.append((id_item, user_item, created_at_item, text_item, retweet_item))
 
-
+p = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
+for i in container:
+	cur.execute(p, i)
 
 # Use the database connection to commit the changes to the database
 
-
-
 # You can check out whether it worked in the SQLite browser! (And with the tests.)
 
+conn.commit()
 
 
 ## [PART 2] - SQL statements
@@ -119,17 +131,27 @@ def get_user_tweets(handle):
 
 # Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in to the variable tweet_posted_times.
 
+tweet_posted_times = "SELECT time_posted FROM Tweets"
+cur.execute(tweet_posted_times)
+tweet_posted_times = cur.fetchall()
 
 # Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them into the variable more_than_2_rts.
 
+more_than_2_rts = "SELECT * FROM Tweets WHERE retweets > 2"
+cur.execute(more_than_2_rts)
+more_than_2_rts = cur.fetchall()
 
 
 # Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a single string value, not a tuple.
 
-
+first_rt = "SELECT * from Tweets WHERE instr(tweet_text, 'RT')"
+cur.execute(first_rt)
+first_rt = cur.fetchone()
+first_rt = first_rt[3]
 
 # Finally, done with database stuff for a bit: write a line of code to close the cursor to the database.
 
+conn.close()
 
 
 ## [PART 3] - Processing data
@@ -146,7 +168,8 @@ def get_user_tweets(handle):
 
 # If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line! Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
 
-
+def get_twitter_users(t):
+	return set(re.findall("@([0-9A-Z_a-z]+)", t))
 
 
 
@@ -195,7 +218,6 @@ class PartThree(unittest.TestCase):
 		self.assertEqual(get_twitter_users("@twitter_user_4, what did you think of the comment by @twitteruser5?"),{'twitter_user_4', 'twitteruser5'})
 	def test4(self):
 		self.assertEqual(get_twitter_users("hey @umich, @aadl is pretty great, huh? @student1 @student2"),{'aadl', 'student2', 'student1', 'umich'})
-
 
 if __name__ == "__main__":
 	unittest.main(verbosity=2)
